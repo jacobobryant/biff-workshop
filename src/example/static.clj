@@ -16,7 +16,7 @@
 
 (def signin-form
   (list
-    [:.text-lg "Email address:"]
+    [:.text-lg "Email address, yo:"]
     [:.h-3]
     [:form.mb-0 {:action "/api/signin-request" :method "post"}
      [:.flex
