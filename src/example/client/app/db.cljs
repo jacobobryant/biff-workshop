@@ -32,14 +32,28 @@
              :messages
              vals
              (sort-by :timestamp #(compare %2 %1)))
+  other-uids (let [my-uid (-> @data :uid (get nil) :uid)]
+               (->> @data
+                 :messages
+                 vals
+                 (map :user/id)
+                 (remove #(= my-uid %))))
+  yos (->> @data :yos vals (sort-by :timestamp #(compare %2 %1)))
 
   tab (get-in @route [:data :name] :crud)
 
   subscriptions (disj #{[:biff/sub :uid]
                         [:biff/sub {:table :messages
                                     :args {'t0 @message-cutoff}
-                                    :where '[[:timestamp t]
+                                    :where '[[:text]
+                                             [:timestamp t]
                                              [(< t0 t)]]}]
+                        [:biff/sub {:table :yos
+                                    :args {'sender @uid}
+                                    :where '[[:sender sender]]}]
+                        [:biff/sub {:table :yos
+                                    :args {'receiver @uid}
+                                    :where '[[:receiver receiver]]}]
                         (when @uid
                           [:biff/sub {:table :users
                                       :id {:user/id @uid}}])}

@@ -73,6 +73,20 @@
 (defc crud < reactive
   []
   [:div
+   [:div "Other users:"]
+   [:ul.list-disc.pl-8
+    (for [uid (react db/other-uids)]
+      [:li {:key (str uid)} (str uid) " "
+       [:button.text-blue-500.hover:underline
+        {:on-click #(m/send-yo uid)}
+        "(send yo)"]
+       ])]
+   [:.h-6]
+   (for [{:keys [sender receiver timestamp]} (react db/yos)]
+     [:.mb-6 (str sender " sent a yo to " receiver " at " timestamp)])
+
+   [:hr.my-6]
+
    (set-value {:label "Foo"
                :model db/foo
                :mutate m/set-foo

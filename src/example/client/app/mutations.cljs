@@ -41,3 +41,8 @@
   ; See the console
   (println "Return value from :example/set-bar back-end event handler:")
   (go (prn (<! (api-send [:example/set-bar {:value x}])))))
+
+(defn send-yo [uid]
+  (send-tx {[:yos] {:sender @db/uid
+                    :receiver uid
+                    :timestamp :db/current-time}}))

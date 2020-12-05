@@ -20,10 +20,23 @@
   ::bar string?
   ::user (s/keys
            :req [:user/email]
-           :opt-un [::foo ::bar]))
+           :opt-un [::foo ::bar])
+  ::sender uuid?
+  ::receiver uuid?
+  ::yo (bu/only-keys
+         :req-un [::sender
+                  ::receiver
+                  ::timestamp]))
 
 (def rules
-  {:messages {:spec [uuid? ::message]
+  {:yos {:spec [uuid? ::yo]
+         :create (fn [{:keys [session/uid doc]}]
+                   (= uid (:sender doc)))
+         :query (fn [{:keys [session/uid doc]}]
+                  (or
+                    (= uid (:sender doc))
+                    (= uid (:receiver doc))))}
+   :messages {:spec [uuid? ::message]
               :query (constantly true)
               :create (fn [{:keys [session/uid] {:keys [user/id]} :doc}]
                         (= uid id))
